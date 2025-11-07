@@ -1,6 +1,7 @@
 import os
 import subprocess
 import time
+import zipfile
 
 # 📂 Rutas fijas (ajustá si cambiás ubicación)
 carpeta = r"C:\Users\leandro.fonrtanar\OneDrive - AXEL JOHNSON INTERNATIONAL AB\Documents\VSCode\name_replacer\testing rig"
@@ -73,11 +74,29 @@ for archivo in os.listdir(carpeta):
         "/Close"
     ]
     subprocess.run(cmd)
-
     time.sleep(3)
+
     if os.path.exists(salida_pdf):
         print(f"✅ Creado: {os.path.basename(salida_pdf)}")
+        # Opcional: eliminar el RTF original
+        # os.remove(ruta)
     else:
         print(f"⚠️ No se generó el PDF para {archivo}")
+
+# 🧩 3. Crear ZIP con datasheet y dimensions
+archivo_pdf = os.path.join(carpeta, f"{sufijo} - datasheet.pdf")
+archivo_dxf = os.path.join(carpeta, f"{sufijo} - Dimensions.dxf")
+
+if os.path.exists(archivo_pdf) and os.path.exists(archivo_dxf):
+    carpeta_superior = os.path.dirname(carpeta)
+    zip_destino = os.path.join(carpeta_superior, f"{sufijo}.zip")
+
+    with zipfile.ZipFile(zip_destino, 'w', compression=zipfile.ZIP_STORED) as zipf:
+        zipf.write(archivo_pdf, os.path.basename(archivo_pdf))
+        zipf.write(archivo_dxf, os.path.basename(archivo_dxf))
+
+    print(f"📦 ZIP creado en: {zip_destino}")
+else:
+    print("⚠️ No se encontraron ambos archivos para crear el ZIP.")
 
 print("🏁 Proceso completado.")
