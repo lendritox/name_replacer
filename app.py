@@ -38,13 +38,11 @@ def check_folder(numero):
     else:
         crear_estructura_cotizacion(numero)
     
-
 def crear_estructura_cotizacion(numero):
     """Crea la carpeta madre y subcarpetas para una nueva cotización."""
     empresa = input("Empresa: ").strip()
     contacto = input("Contacto: ").strip()
     contacto_carpeta = contacto.split()[0]
-    contacto_excel = contacto.title()
     descripcion = input("Descripción general: ").strip()
     codigo_ask = input("Código ASK: ").strip()
     n_items = int(input("Cantidad de ítems a diseñar: ").strip())
@@ -61,13 +59,13 @@ def crear_estructura_cotizacion(numero):
         os.makedirs(sub, exist_ok=True)
         print(f"  ➕ Subcarpeta: {sub}")
 
-    # Copiar plantilla de cotización
+    # Copiar plantilla de cotización y modifcarla
     if os.path.exists(PLANTILLA_QUOTE):
         destino = os.path.join(carpeta_madre, f"{numero}.01 - quote.xlsm")
         shutil.copy(PLANTILLA_QUOTE, destino)
         print(f"🧾 Copiada plantilla de cotización: {destino}")
         
-        modificar_excel(destino, numero, empresa, contacto_excel, n_items)
+        modificar_excel(destino, numero, empresa, contacto, n_items)
     
     else:
         print("⚠️ No se encontró la plantilla de cotización.")
@@ -84,8 +82,8 @@ def modificar_excel(destino, numero, empresa, contacto, n_items):
     ws = wb.Worksheets(1)
 
     # === 1) Escribir datos generales ===
-    ws.Range("C4").Value = empresa.capitalize()
-    ws.Range("C5").Value = contacto.capitalize()
+    ws.Range("C4").Value = empresa.title()
+    ws.Range("C5").Value = contacto.title()
 
     # año en 2 dígitos
     year2 = str(datetime.datetime.now().year % 100).zfill(2)
@@ -170,7 +168,6 @@ def procesar_cotizacion(carpeta_madre):
             renombrar_y_convertir(sub_path, sufijo)
 
     print("\n✅ Cotización procesada para envío.")
-
 
 def renombrar_y_convertir(carpeta, sufijo):
     """Renombra, convierte y empaqueta los archivos de una carpeta de ítem."""
