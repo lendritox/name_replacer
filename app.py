@@ -20,6 +20,8 @@ PDFCREATOR_PATH = r"C:\Program Files\PDFCreator\PDFCreator.exe"
 # 🔧 FUNCIONES DE UTILIDAD
 # ----------------------------------------------------------
 
+
+
 def check_folder(numero):
     base_dir = BASE_DIR
     carpeta_existente = None
@@ -106,7 +108,7 @@ def modificar_excel(destino, numero, empresa, contacto, n_items):
     for i in range(1, n_items + 1):
 
         # Part number base
-        pn_base = f"{numero}.{chr(97+i)}"  # a, b, c ...
+        pn_base = f"{numero}.{chr(96+i)}"  # a, b, c ...
 
         # Fila 1: Local
         ws.Range(f"A{current_row}").Value = current_row-9
@@ -134,7 +136,7 @@ def modificar_excel(destino, numero, empresa, contacto, n_items):
         ws.Range(f"A{current_row}").Value = current_row-9
         ws.Range(f"B{current_row}").Value = "-"
         ws.Range(f"C{current_row}").Value = "DHL shipment from factory"
-        ws.Range(f"D{current_row}").Value = 1
+        ws.Range(f"D{current_row}").Value = 0
         ws.Range(f"E{current_row}").Value = "5-6 weeks"
         ws.Range(f"F{current_row}").Value = 2300
         ws.Range(f"G{current_row}").Formula = f"=F{current_row}*D{current_row}"
@@ -162,7 +164,7 @@ def procesar_cotizacion(carpeta_madre):
         sub_path = os.path.join(carpeta_madre, sub)
         
         # patrón: 15007.a o 15007.a - descripción
-        if os.path.isdir(sub_path) and re.match(rf"^{re.escape(numero)}\.[a-z](?:\s-\s.*)?$", sub, re.IGNORECASE):
+        if os.path.isdir(sub_path) and re.match(rf"^{re.escape(numero)}\.[^ \-]+(?:\s-\s.*)?$", sub, re.IGNORECASE):
             sufijo = sub.split(" - ")[0]  # Ej: "15007.a"
             print(f"\n➡️ Procesando {sufijo}")
             renombrar_y_convertir(sub_path, sufijo)
